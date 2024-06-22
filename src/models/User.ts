@@ -46,5 +46,26 @@ export class User {
         })
     };
 
-    // save(): Promise {};
- }
+    save(): void {
+        // if user.id then make a put request, else make a post request
+        const id = this.get('id');
+
+        if (id) {
+            axios.put(`http://localhost:3000/users/${id}`, this.data)
+        } else {
+            axios.post('http://localhost:3000/users', this.data);
+        }
+    };
+
+    delete(): void {
+        const id = this.get('id');
+
+        axios.delete(`http://localhost:3000/users/${id}`)
+            .then(response => {
+                console.log( `User ${id} deleted successfully`, response.data);
+            })
+            .catch(error => {
+                console.error(`Error deleting user_id: ${id}, this user does not exist.`);
+            })
+    };
+}
