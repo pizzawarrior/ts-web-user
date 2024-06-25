@@ -126,18 +126,21 @@ Object.defineProperty(exports, "__esModule", {
 exports.Attributes = void 0;
 var Attributes = /** @class */function () {
   function Attributes(data) {
+    var _this = this;
     this.data = data;
+    // generic constraint: K can only ever be one of the keys of T,
+    // (T in this case refers to the object of UserProps.) key can only be of type K.
+    // we return the value of the corresponding key of T
+    // The reason why this is an arrow fn (bound fn) is because there was a context issue with calling this method.
+    // This will now always bind 'this' to the instance of Attributes that we create.
+    this.get = function (key) {
+      return _this.data[key];
+    };
+    this.set = function (updateProperty) {
+      Object.assign(_this.data, updateProperty);
+    };
   }
   ;
-  // generic constraint: K can only ever be one of the keys of T, (which
-  // in this case refers to the object of UserProps.) key can only be of type K.
-  // we return the value of the corresponding key of T
-  Attributes.prototype.get = function (key) {
-    return this.data[key];
-  };
-  Attributes.prototype.set = function (updateProperty) {
-    Object.assign(this.data, updateProperty);
-  };
   return Attributes;
 }();
 exports.Attributes = Attributes;
@@ -150,22 +153,23 @@ Object.defineProperty(exports, "__esModule", {
 exports.Events = void 0;
 var Events = /** @class */function () {
   function Events() {
+    var _this = this;
     this.events = {};
+    this.on = function (eventName, callback) {
+      var handlers = _this.events[eventName] || [];
+      handlers.push(callback);
+      _this.events[eventName] = handlers;
+    };
+    this.trigger = function (eventName) {
+      var handlers = _this.events[eventName];
+      if (!handlers || handlers.length === 0) {
+        return;
+      }
+      handlers.forEach(function (callback) {
+        callback();
+      });
+    };
   }
-  Events.prototype.on = function (eventName, callback) {
-    var handlers = this.events[eventName] || [];
-    handlers.push(callback);
-    this.events[eventName] = handlers;
-  };
-  Events.prototype.trigger = function (eventName) {
-    var handlers = this.events[eventName];
-    if (!handlers || handlers.length === 0) {
-      return;
-    }
-    handlers.forEach(function (callback) {
-      callback();
-    });
-  };
   return Events;
 }();
 exports.Events = Events;
@@ -5905,11 +5909,34 @@ var Events_1 = require("./Events");
 var Sync_1 = require("./Sync");
 var rootUrl = 'http://localhost:3000/users';
 var User = /** @class */function () {
-  function User() {
+  function User(attrs) {
     this.events = new Events_1.Events();
     this.sync = new Sync_1.Sync(rootUrl);
-    this.attrs = new Attributes_1.Attributes({});
+    this.attributes = new Attributes_1.Attributes(attrs);
   }
+  Object.defineProperty(User.prototype, "on", {
+    get: function get() {
+      return this.events.on;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  ;
+  Object.defineProperty(User.prototype, "trigger", {
+    get: function get() {
+      return this.events.trigger;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  ;
+  Object.defineProperty(User.prototype, "get", {
+    get: function get() {
+      return this.attributes.get;
+    },
+    enumerable: false,
+    configurable: true
+  });
   return User;
 }();
 exports.User = User;
@@ -5926,6 +5953,11 @@ var user = new User_1.User({
   name: 'Steve',
   age: 12
 });
+// user.on('change', () => {
+//     console.log('user 1 was here');
+// });
+// user.trigger('change');
+console.log(user.get('name'));
 // // test if events are registering and saving to the events array
 // user.events.on('change', () => { console.log('change 1') })
 // user.events.on('change', () => { console.log('change 2') })
@@ -5952,7 +5984,6 @@ var user = new User_1.User({
 // }, 3000);
 // const user = new User({ 'id': 5 });
 // user.delete();
-// const sync = new Sync('http://localhost:3000/users')
 },{"./models/User":"src/models/User.ts"}],"../../../../opt/homebrew/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -5978,7 +6009,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55377" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58323" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
