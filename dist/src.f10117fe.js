@@ -147,6 +147,78 @@ var Attributes = /** @class */function () {
   return Attributes;
 }();
 exports.Attributes = Attributes;
+},{}],"src/models/Model.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Model = void 0;
+var Model = /** @class */function () {
+  function Model(attributes, events, sync) {
+    this.attributes = attributes;
+    this.events = events;
+    this.sync = sync;
+  }
+  ;
+  Object.defineProperty(Model.prototype, "on", {
+    get: function get() {
+      return this.events.on;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  ;
+  Object.defineProperty(Model.prototype, "trigger", {
+    get: function get() {
+      return this.events.trigger;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  ;
+  Object.defineProperty(Model.prototype, "getProperty", {
+    get: function get() {
+      return this.attributes.getProperty;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  ;
+  Model.prototype.setProperty = function (updateProperty) {
+    this.attributes.setProperty(updateProperty);
+    this.events.trigger('change');
+  };
+  ;
+  Model.prototype.fetch = function () {
+    var _this = this;
+    var id = this.attributes.getProperty('id');
+    if (typeof id !== 'number') {
+      throw new Error('Cannot fetch a user without a valid id');
+    }
+    this.sync.fetch(id).then(function (response) {
+      // we use this.set so we can access the this.events.trigger() method for the User class, not the Attributes version
+      _this.setProperty(response.data);
+    });
+  };
+  Model.prototype.save = function () {
+    var _this = this;
+    this.sync.save(this.attributes.getAllProperties()).then(function (response) {
+      _this.trigger('save');
+    }).catch(function () {
+      _this.trigger('error');
+    });
+  };
+  Model.prototype.delete = function () {
+    var id = this.attributes.getProperty('id');
+    if (typeof id !== 'number') {
+      throw new Error('Cannot delete a user without a valid id');
+    }
+    this.sync.delete(id);
+  };
+  return Model;
+}();
+exports.Model = Model;
 },{}],"src/models/Events.ts":[function(require,module,exports) {
 "use strict";
 
@@ -5858,7 +5930,7 @@ exports.isCancel = isCancel;
 exports.CanceledError = CanceledError;
 exports.AxiosError = AxiosError;
 exports.Axios = Axios;
-},{"./lib/axios.js":"node_modules/axios/lib/axios.js"}],"src/models/Sync.ts":[function(require,module,exports) {
+},{"./lib/axios.js":"node_modules/axios/lib/axios.js"}],"src/models/ApiSync.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -5869,13 +5941,13 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Sync = void 0;
+exports.ApiSync = void 0;
 var axios_1 = __importDefault(require("axios"));
-var Sync = /** @class */function () {
-  function Sync(rootUrl) {
+var ApiSync = /** @class */function () {
+  function ApiSync(rootUrl) {
     this.rootUrl = rootUrl;
   }
-  Sync.prototype.save = function (data) {
+  ApiSync.prototype.save = function (data) {
     var id = data.id;
     // if user.id then make a put request, else make a post request
     if (id) {
@@ -5885,11 +5957,11 @@ var Sync = /** @class */function () {
     }
   };
   ;
-  Sync.prototype.fetch = function (id) {
+  ApiSync.prototype.fetch = function (id) {
     return axios_1.default.get("".concat(this.rootUrl, "/").concat(id));
   };
   ;
-  Sync.prototype.delete = function (id) {
+  ApiSync.prototype.delete = function (id) {
     axios_1.default.delete("".concat(this.rootUrl, "/").concat(id)).then(function (response) {
       console.log("User ".concat(id, " deleted successfully"), response.data);
     }).catch(function (error) {
@@ -5897,85 +5969,53 @@ var Sync = /** @class */function () {
     });
   };
   ;
-  return Sync;
+  return ApiSync;
 }();
-exports.Sync = Sync;
+exports.ApiSync = ApiSync;
 },{"axios":"node_modules/axios/index.js"}],"src/models/User.ts":[function(require,module,exports) {
 "use strict";
 
+var __extends = this && this.__extends || function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+    };
+    return _extendStatics(d, b);
+  };
+  return function (d, b) {
+    if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    _extendStatics(d, b);
+    function __() {
+      this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.User = void 0;
 var Attributes_1 = require("./Attributes");
+var Model_1 = require("./Model");
 var Events_1 = require("./Events");
-var Sync_1 = require("./Sync");
+var ApiSync_1 = require("./ApiSync");
 var rootUrl = 'http://localhost:3000/users';
-var User = /** @class */function () {
-  function User(attrs) {
-    this.events = new Events_1.Events();
-    this.sync = new Sync_1.Sync(rootUrl);
-    this.attributes = new Attributes_1.Attributes(attrs);
+var User = /** @class */function (_super) {
+  __extends(User, _super);
+  function User() {
+    return _super !== null && _super.apply(this, arguments) || this;
   }
-  Object.defineProperty(User.prototype, "on", {
-    get: function get() {
-      return this.events.on;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  ;
-  Object.defineProperty(User.prototype, "trigger", {
-    get: function get() {
-      return this.events.trigger;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  ;
-  Object.defineProperty(User.prototype, "getProperty", {
-    get: function get() {
-      return this.attributes.getProperty;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  ;
-  User.prototype.setProperty = function (updateProperty) {
-    this.attributes.setProperty(updateProperty);
-    this.events.trigger('change');
-  };
-  ;
-  User.prototype.fetch = function () {
-    var _this = this;
-    var id = this.attributes.getProperty('id');
-    if (typeof id !== 'number') {
-      throw new Error('Cannot fetch a user without a valid id');
-    }
-    this.sync.fetch(id).then(function (response) {
-      // we use this.set so we can access the this.events.trigger() method for the User class, not the Attributes version
-      _this.setProperty(response.data);
-    });
-  };
-  User.prototype.save = function () {
-    var _this = this;
-    this.sync.save(this.attributes.getAllProperties()).then(function (response) {
-      _this.trigger('save');
-    }).catch(function () {
-      _this.trigger('error');
-    });
-  };
-  User.prototype.delete = function () {
-    var id = this.attributes.getProperty('id');
-    if (typeof id !== 'number') {
-      throw new Error('Cannot delete a user without a valid id');
-    }
-    this.sync.delete(id);
+  User.createNewUser = function (attrs) {
+    return new User(new Attributes_1.Attributes(attrs), new Events_1.Events(), new ApiSync_1.ApiSync(rootUrl));
   };
   return User;
-}();
+}(Model_1.Model);
 exports.User = User;
-},{"./Attributes":"src/models/Attributes.ts","./Events":"src/models/Events.ts","./Sync":"src/models/Sync.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"./Attributes":"src/models/Attributes.ts","./Model":"src/models/Model.ts","./Events":"src/models/Events.ts","./ApiSync":"src/models/ApiSync.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6022,13 +6062,14 @@ var User_1 = require("./models/User");
 //     console.log(user)
 // });
 // user.fetch()
-var user = new User_1.User({
+var user = User_1.User.createNewUser({
   "name": 'SnoopDawg'
 });
-user.on('save', function () {
-  console.log(user);
-});
-user.save();
+console.log(user.getProperty('name'));
+// user.on('save', () => {
+//     console.log(user)
+// })
+// user.save()
 },{"./models/User":"src/models/User.ts"}],"../../../../opt/homebrew/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -6054,7 +6095,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52162" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52042" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

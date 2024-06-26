@@ -1,5 +1,5 @@
 import { User } from "./models/User"
-import { Sync } from "./models/Sync";
+import { ApiSync } from "./models/ApiSync";
 import axios from 'axios'
 
 // Various tests for User class methods
@@ -52,8 +52,9 @@ import axios from 'axios'
 // });
 // user.fetch()
 
-const user = new User({"name": 'SnoopDawg'})
-user.on('save', () => {
-    console.log(user)
-})
-user.save()
+const user = User.createNewUser({"name": 'SnoopDawg'})
+console.log(user.getProperty('name'))
+// user.on('save', () => {
+//     console.log(user)
+// })
+// user.save()
