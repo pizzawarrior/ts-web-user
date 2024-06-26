@@ -52,5 +52,8 @@ import axios from 'axios'
 // });
 // user.fetch()
 
-// const user = new User({"id": 4})
-// user.delete()
+const user = new User({"name": 'SnoopDawg'})
+user.on('save', () => {
+    console.log(user)
+})
+user.save()

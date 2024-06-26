@@ -28,29 +28,40 @@ export class User {
         return this.events.trigger;
     };
 
-    get get() {
-        return this.attributes.get;
+    get getProperty() {
+        return this.attributes.getProperty;
     };
 
-    set(updateProperty: UserProps): void {
-        this.attributes.set(updateProperty);
+    setProperty(updateProperty: UserProps): void {
+        this.attributes.setProperty(updateProperty);
         this.events.trigger('change');
     };
 
     fetch(): void {
-        const id = this.attributes.get('id');
+        const id = this.attributes.getProperty('id');
         if (typeof id !== 'number') {
             throw new Error('Cannot fetch a user without a valid id');
         }
         this.sync.fetch(id)
             .then((response: AxiosResponse): void => {
                 // we use this.set so we can access the this.events.trigger() method for the User class, not the Attributes version
-                this.set(response.data)
+                this.setProperty(response.data)
             });
     }
 
+    save():void {
+        this.sync.save(this.attributes.getAllProperties())
+            .then((response: AxiosResponse): void => {
+                this.trigger('save')
+            }
+        )
+        .catch(() => {
+            this.trigger('error');
+        })
+    }
+
     delete(): void {
-        const id = this.attributes.get('id');
+        const id = this.attributes.getProperty('id');
         if (typeof id !== 'number') {
             throw new Error('Cannot delete a user without a valid id');
         }
