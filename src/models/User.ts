@@ -48,4 +48,12 @@ export class User {
                 this.set(response.data)
             });
     }
+
+    delete(): void {
+        const id = this.attributes.get('id');
+        if (typeof id !== 'number') {
+            throw new Error('Cannot delete a user without a valid id');
+        }
+        this.sync.delete(id);
+    }
 }

@@ -46,8 +46,11 @@ import axios from 'axios'
 // const user = new User({ 'id': 5 });
 // user.delete();
 
-const user = new User({"id": 1})
-user.on('change', () => {
-    console.log(user)
-});
-user.fetch()
+// const user = new User({"id": 1})
+// user.on('change', () => {
+//     console.log(user)
+// });
+// user.fetch()
+
+// const user = new User({"id": 4})
+// user.delete()
