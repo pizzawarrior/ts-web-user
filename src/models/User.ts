@@ -13,11 +13,14 @@ const rootUrl = 'http://localhost:3000/users';
 
 export class User extends Model<UserProps> {
 
-    static createNewUser(attrs: UserProps): User {
+    static createUser(attrs: UserProps): User {
         return new User(
             new Attributes<UserProps>(attrs),
             new Events(),
             new ApiSync<UserProps>(rootUrl))
-    }
+    };
 
+    isAdmin(id: number): boolean {
+        return this.getProperty('id') === 1;
+    }
 }

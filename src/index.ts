@@ -52,8 +52,8 @@ import axios from 'axios'
 // });
 // user.fetch()
 
-const user = User.createNewUser({"name": 'SnoopDawg'})
-console.log(user.getProperty('name'))
+// const user = User.createUser({"name": 'Dr. Dre', 'age': 41})
+// // console.log(user.getProperty('name'))
 // user.on('save', () => {
 //     console.log(user)
 // })
