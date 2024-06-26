@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import { Attributes } from './Attributes';
 import { Events } from './Events';
 import { Sync } from './Sync';
@@ -29,5 +30,22 @@ export class User {
 
     get get() {
         return this.attributes.get;
+    };
+
+    set(updateProperty: UserProps): void {
+        this.attributes.set(updateProperty);
+        this.events.trigger('change');
+    };
+
+    fetch(): void {
+        const id = this.attributes.get('id');
+        if (typeof id !== 'number') {
+            throw new Error('Cannot fetch a user without a valid id');
+        }
+        this.sync.fetch(id)
+            .then((response: AxiosResponse): void => {
+                // we use this.set so we can access the this.events.trigger() method for the User class, not the Attributes version
+                this.set(response.data)
+            });
     }
 }

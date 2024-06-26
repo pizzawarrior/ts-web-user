@@ -128,9 +128,9 @@ var Attributes = /** @class */function () {
   function Attributes(data) {
     var _this = this;
     this.data = data;
-    // generic constraint: K can only ever be one of the keys of T,
+    // Generic constraint: K can only ever be one of the keys of T,
     // (T in this case refers to the object of UserProps.) key can only be of type K.
-    // we return the value of the corresponding key of T
+    // We return the value of the corresponding key of T
     // The reason why this is an arrow fn (bound fn) is because there was a context issue with calling this method.
     // This will now always bind 'this' to the instance of Attributes that we create.
     this.get = function (key) {
@@ -5937,6 +5937,23 @@ var User = /** @class */function () {
     enumerable: false,
     configurable: true
   });
+  ;
+  User.prototype.set = function (updateProperty) {
+    this.attributes.set(updateProperty);
+    this.events.trigger('change');
+  };
+  ;
+  User.prototype.fetch = function () {
+    var _this = this;
+    var id = this.attributes.get('id');
+    if (typeof id !== 'number') {
+      throw new Error('Cannot fetch a user without a valid id');
+    }
+    this.sync.fetch(id).then(function (response) {
+      // we use this.set so we can access the this.events.trigger() method for the User class, not the Attributes version
+      _this.set(response.data);
+    });
+  };
   return User;
 }();
 exports.User = User;
@@ -5949,15 +5966,13 @@ Object.defineProperty(exports, "__esModule", {
 var User_1 = require("./models/User");
 // Various tests for User class methods
 // TODO: Delete these
-var user = new User_1.User({
-  name: 'Steve',
-  age: 12
-});
+// const user = new User({ name: 'Steve', age: 12 })
 // user.on('change', () => {
 //     console.log('user 1 was here');
 // });
-// user.trigger('change');
-console.log(user.get('name'));
+// // user.trigger('change');
+// user.set({ 'name': 'Mikey' });
+// console.log(user.get('name'));
 // // test if events are registering and saving to the events array
 // user.events.on('change', () => { console.log('change 1') })
 // user.events.on('change', () => { console.log('change 2') })
@@ -5984,6 +5999,13 @@ console.log(user.get('name'));
 // }, 3000);
 // const user = new User({ 'id': 5 });
 // user.delete();
+var user = new User_1.User({
+  "id": 1
+});
+user.on('change', function () {
+  console.log(user);
+});
+user.fetch();
 },{"./models/User":"src/models/User.ts"}],"../../../../opt/homebrew/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -6009,7 +6031,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58323" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51353" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
