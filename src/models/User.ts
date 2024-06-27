@@ -20,6 +20,7 @@ export class User extends Model<UserProps> {
             new ApiSync<UserProps>(rootUrl))
     };
 
+    // TODO: change this equality check in the future to a more meaningful value
     isAdmin(id: number): boolean {
         return this.getProperty('id') === 1;
     }

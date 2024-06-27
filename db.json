@@ -22,6 +22,16 @@
     {
       "name": "SnoopDawg",
       "id": 5
+    },
+    {
+      "name": "Dr. Dre",
+      "age": 41,
+      "id": 6
+    },
+    {
+      "name": "Dr. Dre",
+      "age": 41,
+      "id": 7
     }
   ]
 }

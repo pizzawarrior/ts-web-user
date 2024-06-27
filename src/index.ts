@@ -1,6 +1,8 @@
 import { User } from "./models/User"
 import { ApiSync } from "./models/ApiSync";
 import axios from 'axios'
+import { Model } from "./models/Model";
+import { Collection } from "./models/Collection";
 
 // Various tests for User class methods
 // TODO: Delete these
@@ -58,3 +60,20 @@ import axios from 'axios'
 //     console.log(user)
 // })
 // user.save()
+
+// user.delete()
+
+// const user = User.createUser({ id: 6 })
+// user.fetch();
+// setTimeout(() => {
+//     console.log(user)
+// }, 2000);
+
+const collection = new Collection('http://localhost:3000/users')
+collection.on('change', () => {
+    console.log(collection.models[3].getProperty('name'))
+});
+collection.fetch();
+// setTimeout(() => {
+//     console.log(collection.models[3].getProperty('name'))
+// }, 2000);

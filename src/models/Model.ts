@@ -28,6 +28,7 @@ export class Model<T extends HasId> {
     on = this.events.on;
     trigger = this.events.trigger;
     getProperty = this.attributes.getProperty;
+    getAllProperties = this.attributes.getAllProperties;
 
     setProperty(updateProperty: T): void {
         this.attributes.setProperty(updateProperty);
@@ -41,7 +42,7 @@ export class Model<T extends HasId> {
         }
         this.sync.fetch(id)
             .then((response: AxiosResponse): void => {
-                // we use this.set so we can access the this.events.trigger() method for the User class, not the Attributes version
+                // we use this.set so we can access the this.events.trigger() method for the User class, not the Attributes version accessed elsewhere
                 this.setProperty(response.data)
             });
     }
