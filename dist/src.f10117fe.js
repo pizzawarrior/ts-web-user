@@ -5952,55 +5952,7 @@ var ApiSync = /** @class */function () {
   return ApiSync;
 }();
 exports.ApiSync = ApiSync;
-},{"axios":"node_modules/axios/index.js"}],"src/models/User.ts":[function(require,module,exports) {
-"use strict";
-
-var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-    };
-    return _extendStatics(d, b);
-  };
-  return function (d, b) {
-    if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    _extendStatics(d, b);
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.User = void 0;
-var Attributes_1 = require("./Attributes");
-var Model_1 = require("./Model");
-var Events_1 = require("./Events");
-var ApiSync_1 = require("./ApiSync");
-var rootUrl = 'http://localhost:3000/users';
-var User = /** @class */function (_super) {
-  __extends(User, _super);
-  function User() {
-    return _super !== null && _super.apply(this, arguments) || this;
-  }
-  User.createUser = function (attrs) {
-    return new User(new Attributes_1.Attributes(attrs), new Events_1.Events(), new ApiSync_1.ApiSync(rootUrl));
-  };
-  ;
-  // TODO: change this equality check in the future to a more meaningful value
-  User.prototype.isAdmin = function (id) {
-    return this.getProperty('id') === 1;
-  };
-  return User;
-}(Model_1.Model);
-exports.User = User;
-},{"./Attributes":"src/models/Attributes.ts","./Model":"src/models/Model.ts","./Events":"src/models/Events.ts","./ApiSync":"src/models/ApiSync.ts"}],"src/models/Collection.ts":[function(require,module,exports) {
+},{"axios":"node_modules/axios/index.js"}],"src/models/Collection.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -6050,14 +6002,68 @@ var Collection = /** @class */function () {
   return Collection;
 }();
 exports.Collection = Collection;
-},{"axios":"node_modules/axios/index.js","./Events":"src/models/Events.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"axios":"node_modules/axios/index.js","./Events":"src/models/Events.ts"}],"src/models/User.ts":[function(require,module,exports) {
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+    };
+    return _extendStatics(d, b);
+  };
+  return function (d, b) {
+    if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    _extendStatics(d, b);
+    function __() {
+      this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.User = void 0;
+var Attributes_1 = require("./Attributes");
+var Model_1 = require("./Model");
+var Events_1 = require("./Events");
+var ApiSync_1 = require("./ApiSync");
+var Collection_1 = require("./Collection");
+var rootUrl = 'http://localhost:3000/users';
+var User = /** @class */function (_super) {
+  __extends(User, _super);
+  function User() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+  User.createUser = function (attrs) {
+    return new User(new Attributes_1.Attributes(attrs), new Events_1.Events(), new ApiSync_1.ApiSync(rootUrl));
+  };
+  ;
+  User.createCollection = function () {
+    return new Collection_1.Collection(rootUrl, function (jsonData) {
+      return User.createUser(jsonData);
+    });
+  };
+  ;
+  // TODO: change this equality check in the future to a more meaningful value
+  User.prototype.isAdmin = function (id) {
+    return this.getProperty('id') === 1;
+  };
+  return User;
+}(Model_1.Model);
+exports.User = User;
+},{"./Attributes":"src/models/Attributes.ts","./Model":"src/models/Model.ts","./Events":"src/models/Events.ts","./ApiSync":"src/models/ApiSync.ts","./Collection":"src/models/Collection.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 var User_1 = require("./models/User");
-var Collection_1 = require("./models/Collection");
 // Various tests for User class methods
 // TODO: Delete these
 // const user = new User({ name: 'Steve', age: 12 })
@@ -6110,17 +6116,15 @@ var Collection_1 = require("./models/Collection");
 // setTimeout(() => {
 //     console.log(user)
 // }, 2000);
-var collection = new Collection_1.Collection('http://localhost:3000/users', function (jsonData) {
-  return User_1.User.createUser(jsonData);
+var newCollection = User_1.User.createCollection();
+newCollection.on('change', function () {
+  console.log(newCollection);
 });
-collection.on('change', function () {
-  console.log(collection);
-});
-collection.fetch();
+newCollection.fetch();
 // setTimeout(() => {
 //     console.log(collection.models[3].getProperty('name'))
 // }, 2000);
-},{"./models/User":"src/models/User.ts","./models/Collection":"src/models/Collection.ts"}],"../../../../opt/homebrew/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./models/User":"src/models/User.ts"}],"../../../../opt/homebrew/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -6145,7 +6149,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65028" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52391" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

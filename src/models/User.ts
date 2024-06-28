@@ -2,6 +2,7 @@ import { Attributes } from './Attributes';
 import { Model } from './Model';
 import { Events } from './Events';
 import { ApiSync } from './ApiSync';
+import { Collection } from './Collection';
 
 export interface UserProps {
     name?: string;
@@ -18,6 +19,13 @@ export class User extends Model<UserProps> {
             new Attributes<UserProps>(attrs),
             new Events(),
             new ApiSync<UserProps>(rootUrl))
+    };
+
+    static createCollection(): Collection<User, UserProps> {
+        return new Collection(
+            rootUrl,
+            (jsonData: UserProps) => User.createUser(jsonData)
+        )
     };
 
     // TODO: change this equality check in the future to a more meaningful value

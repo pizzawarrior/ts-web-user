@@ -1,8 +1,4 @@
-import { User, UserProps } from "./models/User"
-import { ApiSync } from "./models/ApiSync";
-import axios from 'axios'
-import { Model } from "./models/Model";
-import { Collection } from "./models/Collection";
+import { User } from "./models/User"
 
 // Various tests for User class methods
 // TODO: Delete these
@@ -69,14 +65,11 @@ import { Collection } from "./models/Collection";
 //     console.log(user)
 // }, 2000);
 
-const collection = new Collection<User, UserProps>(
-    'http://localhost:3000/users',
-    (jsonData: UserProps) => User.createUser(jsonData)
-)
-collection.on('change', () => {
-    console.log(collection);
+const newCollection = User.createCollection()
+newCollection.on('change', () => {
+    console.log(newCollection);
 });
-collection.fetch();
+newCollection.fetch();
 // setTimeout(() => {
 //     console.log(collection.models[3].getProperty('name'))
 // }, 2000);
