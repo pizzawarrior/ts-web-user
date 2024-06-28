@@ -128,14 +128,42 @@ var UserForm = /** @class */function () {
   function UserForm(parent) {
     this.parent = parent;
   }
-  UserForm.prototype.template = function () {
-    return "\n            <div>\n                <h1>User Form</h1>\n                <input>\n            </div>\n        ";
+  UserForm.prototype.eventsMap = function () {
+    return {
+      'click:button': this.onButtonClick,
+      'mouseenter:h1': this.onH1Hover
+    };
+  };
+  UserForm.prototype.onH1Hover = function () {
+    console.log('y que carnal');
+  };
+  UserForm.prototype.onButtonClick = function () {
+    console.log('orale holmes');
   };
   ;
+  UserForm.prototype.template = function () {
+    return "\n            <div>\n                <h1>User Form</h1>\n                <input>\n                <button>Enter</button>\n            </div>\n        ";
+  };
+  ;
+  UserForm.prototype.bindEvents = function (fragment) {
+    var eventsMap = this.eventsMap();
+    var _loop_1 = function _loop_1(eventKey) {
+      var _a = eventKey.split(':'),
+        eventName = _a[0],
+        selector = _a[1];
+      fragment.querySelectorAll(selector).forEach(function (element) {
+        element.addEventListener(eventName, eventsMap[eventKey]);
+      });
+    };
+    for (var eventKey in eventsMap) {
+      _loop_1(eventKey);
+    }
+  };
   UserForm.prototype.render = function () {
     // we need to turn the string literal from the template() method into an actual html element
     var templateElement = document.createElement('template');
     templateElement.innerHTML = this.template();
+    this.bindEvents(templateElement.content);
     this.parent.append(templateElement.content);
   };
   ;
@@ -233,7 +261,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50222" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54796" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
