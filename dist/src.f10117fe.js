@@ -117,7 +117,118 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"node_modules/axios/lib/helpers/bind.js":[function(require,module,exports) {
+})({"src/models/Attributes.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Attributes = void 0;
+var Attributes = /** @class */function () {
+  function Attributes(data) {
+    var _this = this;
+    this.data = data;
+    // Generic constraint: K can only ever be one of the keys of T,
+    // (T in this case refers to the object of UserProps.) key can only be of type K.
+    // We return the value of the corresponding key of T
+    // The reason why this is an arrow fn (bound fn) is because there was a context issue with calling this method.
+    // This will now always bind 'this' to the instance of Attributes that we create.
+    this.getProperty = function (key) {
+      return _this.data[key];
+    };
+    this.setProperty = function (updateProperty) {
+      Object.assign(_this.data, updateProperty);
+    };
+  }
+  ;
+  Attributes.prototype.getAllProperties = function () {
+    return this.data;
+  };
+  return Attributes;
+}();
+exports.Attributes = Attributes;
+},{}],"src/models/Model.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Model = void 0;
+var Model = /** @class */function () {
+  function Model(attributes, events, sync) {
+    this.attributes = attributes;
+    this.events = events;
+    this.sync = sync;
+    this.on = this.events.on;
+    this.trigger = this.events.trigger;
+    this.getProperty = this.attributes.getProperty;
+    this.getAllProperties = this.attributes.getAllProperties;
+  }
+  ;
+  Model.prototype.setProperty = function (updateProperty) {
+    this.attributes.setProperty(updateProperty);
+    this.events.trigger('change');
+  };
+  ;
+  Model.prototype.fetch = function () {
+    var _this = this;
+    var id = this.attributes.getProperty('id');
+    if (typeof id !== 'number') {
+      throw new Error('Cannot fetch a user without a valid id');
+    }
+    this.sync.fetch(id).then(function (response) {
+      // we use this.set so we can access the this.events.trigger() method for the User class, not the Attributes version accessed elsewhere
+      _this.setProperty(response.data);
+    });
+  };
+  Model.prototype.save = function () {
+    var _this = this;
+    this.sync.save(this.attributes.getAllProperties()).then(function (response) {
+      _this.trigger('save');
+    }).catch(function () {
+      _this.trigger('error');
+    });
+  };
+  Model.prototype.delete = function () {
+    var id = this.attributes.getProperty('id');
+    if (typeof id !== 'number') {
+      throw new Error('Cannot delete a user without a valid id');
+    }
+    this.sync.delete(id);
+  };
+  return Model;
+}();
+exports.Model = Model;
+},{}],"src/models/Events.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Events = void 0;
+var Events = /** @class */function () {
+  function Events() {
+    var _this = this;
+    this.events = {};
+    this.on = function (eventName, callback) {
+      var handlers = _this.events[eventName] || [];
+      handlers.push(callback);
+      _this.events[eventName] = handlers;
+    };
+    this.trigger = function (eventName) {
+      var handlers = _this.events[eventName];
+      if (!handlers || handlers.length === 0) {
+        return;
+      }
+      handlers.forEach(function (callback) {
+        callback();
+      });
+    };
+  }
+  return Events;
+}();
+exports.Events = Events;
+},{}],"node_modules/axios/lib/helpers/bind.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5799,118 +5910,7 @@ exports.isCancel = isCancel;
 exports.CanceledError = CanceledError;
 exports.AxiosError = AxiosError;
 exports.Axios = Axios;
-},{"./lib/axios.js":"node_modules/axios/lib/axios.js"}],"src/models/Attributes.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Attributes = void 0;
-var Attributes = /** @class */function () {
-  function Attributes(data) {
-    var _this = this;
-    this.data = data;
-    // Generic constraint: K can only ever be one of the keys of T,
-    // (T in this case refers to the object of UserProps.) key can only be of type K.
-    // We return the value of the corresponding key of T
-    // The reason why this is an arrow fn (bound fn) is because there was a context issue with calling this method.
-    // This will now always bind 'this' to the instance of Attributes that we create.
-    this.getProperty = function (key) {
-      return _this.data[key];
-    };
-    this.setProperty = function (updateProperty) {
-      Object.assign(_this.data, updateProperty);
-    };
-  }
-  ;
-  Attributes.prototype.getAllProperties = function () {
-    return this.data;
-  };
-  return Attributes;
-}();
-exports.Attributes = Attributes;
-},{}],"src/models/Model.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Model = void 0;
-var Model = /** @class */function () {
-  function Model(attributes, events, sync) {
-    this.attributes = attributes;
-    this.events = events;
-    this.sync = sync;
-    this.on = this.events.on;
-    this.trigger = this.events.trigger;
-    this.getProperty = this.attributes.getProperty;
-    this.getAllProperties = this.attributes.getAllProperties;
-  }
-  ;
-  Model.prototype.setProperty = function (updateProperty) {
-    this.attributes.setProperty(updateProperty);
-    this.events.trigger('change');
-  };
-  ;
-  Model.prototype.fetch = function () {
-    var _this = this;
-    var id = this.attributes.getProperty('id');
-    if (typeof id !== 'number') {
-      throw new Error('Cannot fetch a user without a valid id');
-    }
-    this.sync.fetch(id).then(function (response) {
-      // we use this.set so we can access the this.events.trigger() method for the User class, not the Attributes version accessed elsewhere
-      _this.setProperty(response.data);
-    });
-  };
-  Model.prototype.save = function () {
-    var _this = this;
-    this.sync.save(this.attributes.getAllProperties()).then(function (response) {
-      _this.trigger('save');
-    }).catch(function () {
-      _this.trigger('error');
-    });
-  };
-  Model.prototype.delete = function () {
-    var id = this.attributes.getProperty('id');
-    if (typeof id !== 'number') {
-      throw new Error('Cannot delete a user without a valid id');
-    }
-    this.sync.delete(id);
-  };
-  return Model;
-}();
-exports.Model = Model;
-},{}],"src/models/Events.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Events = void 0;
-var Events = /** @class */function () {
-  function Events() {
-    var _this = this;
-    this.events = {};
-    this.on = function (eventName, callback) {
-      var handlers = _this.events[eventName] || [];
-      handlers.push(callback);
-      _this.events[eventName] = handlers;
-    };
-    this.trigger = function (eventName) {
-      var handlers = _this.events[eventName];
-      if (!handlers || handlers.length === 0) {
-        return;
-      }
-      handlers.forEach(function (callback) {
-        callback();
-      });
-    };
-  }
-  return Events;
-}();
-exports.Events = Events;
-},{}],"src/models/ApiSync.ts":[function(require,module,exports) {
+},{"./lib/axios.js":"node_modules/axios/lib/axios.js"}],"src/models/ApiSync.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -6013,11 +6013,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Collection = void 0;
 var axios_1 = __importDefault(require("axios"));
-var User_1 = require("./User");
 var Events_1 = require("./Events");
 var Collection = /** @class */function () {
-  function Collection(rootUrl) {
+  function Collection(rootUrl,
+  // pass in a function that will parse the json data returned from api call
+  deserialize) {
     this.rootUrl = rootUrl;
+    this.deserialize = deserialize;
     this.models = [];
     this.events = new Events_1.Events();
   }
@@ -6039,8 +6041,8 @@ var Collection = /** @class */function () {
     var _this = this;
     axios_1.default.get(this.rootUrl).then(function (response) {
       response.data.forEach(function (value) {
-        var user = User_1.User.createUser(value);
-        _this.models.push(user);
+        // push each data entry, K, into the models array
+        _this.models.push(_this.deserialize(value));
       });
       _this.trigger('change');
     });
@@ -6048,12 +6050,13 @@ var Collection = /** @class */function () {
   return Collection;
 }();
 exports.Collection = Collection;
-},{"axios":"node_modules/axios/index.js","./User":"src/models/User.ts","./Events":"src/models/Events.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"axios":"node_modules/axios/index.js","./Events":"src/models/Events.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+var User_1 = require("./models/User");
 var Collection_1 = require("./models/Collection");
 // Various tests for User class methods
 // TODO: Delete these
@@ -6107,15 +6110,17 @@ var Collection_1 = require("./models/Collection");
 // setTimeout(() => {
 //     console.log(user)
 // }, 2000);
-var collection = new Collection_1.Collection('http://localhost:3000/users');
+var collection = new Collection_1.Collection('http://localhost:3000/users', function (jsonData) {
+  return User_1.User.createUser(jsonData);
+});
 collection.on('change', function () {
-  console.log(collection.models[3].getProperty('name'));
+  console.log(collection);
 });
 collection.fetch();
 // setTimeout(() => {
 //     console.log(collection.models[3].getProperty('name'))
 // }, 2000);
-},{"./models/Collection":"src/models/Collection.ts"}],"../../../../opt/homebrew/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./models/User":"src/models/User.ts","./models/Collection":"src/models/Collection.ts"}],"../../../../opt/homebrew/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
