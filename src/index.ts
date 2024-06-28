@@ -1,4 +1,5 @@
 import { User } from "./models/User"
+import { UserForm } from "./views/UserForm"
 
 // Various tests for User class methods
 // TODO: Delete these
@@ -65,11 +66,11 @@ import { User } from "./models/User"
 //     console.log(user)
 // }, 2000);
 
-const newCollection = User.createCollection()
-newCollection.on('change', () => {
-    console.log(newCollection);
-});
-newCollection.fetch();
-// setTimeout(() => {
-//     console.log(collection.models[3].getProperty('name'))
-// }, 2000);
+// const newCollection = User.createCollection()
+// newCollection.on('change', () => {
+//     console.log(newCollection);
+// });
+// newCollection.fetch();
+
+const userForm = new UserForm(document.getElementById('root') as HTMLElement);
+userForm.render();

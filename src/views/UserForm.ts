@@ -11,6 +11,7 @@ export class UserForm {
     };
 
     render(): void {
+        // we need to turn the string literal from the template() method into an actual html element
         const templateElement = document.createElement('template');
         templateElement.innerHTML = this.template();
 
