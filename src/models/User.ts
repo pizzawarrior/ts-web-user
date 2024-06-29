@@ -32,4 +32,9 @@ export class User extends Model<UserProps> {
     isAdmin(id: number): boolean {
         return this.getProperty('id') === 1;
     }
+
+    setRandomAge(): void {
+        const age = Math.floor(Math.random() * 120)
+        this.setProperty({ age })
+    };
 }

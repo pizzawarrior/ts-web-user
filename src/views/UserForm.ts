@@ -1,22 +1,29 @@
 import { User } from "../models/User";
 
 export class UserForm {
-    constructor(public parent: Element, public model: User) {}
+    constructor(
+        public parent: Element,
+        public model: User,
+    ) {
+        this.bindEventToModel();
+    };
+
+    // helper method to re-render data in the browser when a change-event is detected
+    bindEventToModel(): void {
+        this.model.on('change', () => {
+            this.render();
+        })
+    }
 
     eventsMap(): { [key: string]: () => void } {
         return {
-            'click:button': this.onButtonClick,
-            'mouseenter:h1': this.onH1Hover
+            'click:.set-age': this.setRandomAgeClick
         };
     }
 
-    onH1Hover(): void {
-        console.log('y que carnal')
-    };
-
-    onButtonClick(): void {
-        console.log('orale holmes')
-    };
+    setRandomAgeClick = (): void => {
+        this.model.setRandomAge();
+    }
 
     template(): string {
         return `
@@ -26,7 +33,8 @@ export class UserForm {
                 <div>User Name: ${this.model.getProperty('name')}</div>
                 <div>User Age: ${this.model.getProperty('age')}</div>
                 <input>
-                <button>Enter</button>
+                <button class="enter">Enter</button>
+                <button class="set-age">Set Random Age</button>
             </div>
         `
     };
@@ -43,6 +51,9 @@ export class UserForm {
     }
 
     render(): void {
+        // this clears the contents of the parent element in the DOM each time a re-render occurs, preventing stacking of all html elements on the page
+        this.parent.innerHTML = '';
+
         // we need to turn the string literal from the template() method into an actual html element
         const templateElement = document.createElement('template');
         templateElement.innerHTML = this.template();

@@ -6054,6 +6054,13 @@ var User = /** @class */function (_super) {
   User.prototype.isAdmin = function (id) {
     return this.getProperty('id') === 1;
   };
+  User.prototype.setRandomAge = function () {
+    var age = Math.floor(Math.random() * 120);
+    this.setProperty({
+      age: age
+    });
+  };
+  ;
   return User;
 }(Model_1.Model);
 exports.User = User;
@@ -6066,25 +6073,29 @@ Object.defineProperty(exports, "__esModule", {
 exports.UserForm = void 0;
 var UserForm = /** @class */function () {
   function UserForm(parent, model) {
+    var _this = this;
     this.parent = parent;
     this.model = model;
+    this.setRandomAgeClick = function () {
+      _this.model.setRandomAge();
+    };
+    this.bindEventToModel();
   }
+  ;
+  // helper method to re-render data in the browser when a change-event is detected
+  UserForm.prototype.bindEventToModel = function () {
+    var _this = this;
+    this.model.on('change', function () {
+      _this.render();
+    });
+  };
   UserForm.prototype.eventsMap = function () {
     return {
-      'click:button': this.onButtonClick,
-      'mouseenter:h1': this.onH1Hover
+      'click:.set-age': this.setRandomAgeClick
     };
   };
-  UserForm.prototype.onH1Hover = function () {
-    console.log('y que carnal');
-  };
-  ;
-  UserForm.prototype.onButtonClick = function () {
-    console.log('orale holmes');
-  };
-  ;
   UserForm.prototype.template = function () {
-    return "\n            <div>\n                <h1>User Form</h1>\n                <div>User ID: ".concat(this.model.getProperty('id'), "</div>\n                <div>User Name: ").concat(this.model.getProperty('name'), "</div>\n                <div>User Age: ").concat(this.model.getProperty('age'), "</div>\n                <input>\n                <button>Enter</button>\n            </div>\n        ");
+    return "\n            <div>\n                <h1>User Form</h1>\n                <div>User ID: ".concat(this.model.getProperty('id'), "</div>\n                <div>User Name: ").concat(this.model.getProperty('name'), "</div>\n                <div>User Age: ").concat(this.model.getProperty('age'), "</div>\n                <input>\n                <button class=\"enter\">Enter</button>\n                <button class=\"set-age\">Set Random Age</button>\n            </div>\n        ");
   };
   ;
   UserForm.prototype.bindEvents = function (fragment) {
@@ -6102,6 +6113,8 @@ var UserForm = /** @class */function () {
     }
   };
   UserForm.prototype.render = function () {
+    // this clears the contents of the parent element in the DOM each time a re-render occurs, preventing stacking of all html elements on the page
+    this.parent.innerHTML = '';
     // we need to turn the string literal from the template() method into an actual html element
     var templateElement = document.createElement('template');
     templateElement.innerHTML = this.template();
