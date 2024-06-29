@@ -72,5 +72,6 @@ import { UserForm } from "./views/UserForm"
 // });
 // newCollection.fetch();
 
-const userForm = new UserForm(document.getElementById('root') as HTMLElement);
+const user = User.createUser({ 'id': 1, 'name': 'Jalapeno', 'age': 97 })
+const userForm = new UserForm(document.getElementById('root') as HTMLElement, user);
 userForm.render();

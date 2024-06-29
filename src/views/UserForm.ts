@@ -1,16 +1,18 @@
+import { User } from "../models/User";
+
 export class UserForm {
-    constructor(public parent: Element) {}
+    constructor(public parent: Element, public model: User) {}
 
     eventsMap(): { [key: string]: () => void } {
         return {
             'click:button': this.onButtonClick,
             'mouseenter:h1': this.onH1Hover
-        }
+        };
     }
 
     onH1Hover(): void {
         console.log('y que carnal')
-    }
+    };
 
     onButtonClick(): void {
         console.log('orale holmes')
@@ -20,6 +22,9 @@ export class UserForm {
         return `
             <div>
                 <h1>User Form</h1>
+                <div>User ID: ${this.model.getProperty('id')}</div>
+                <div>User Name: ${this.model.getProperty('name')}</div>
+                <div>User Age: ${this.model.getProperty('age')}</div>
                 <input>
                 <button>Enter</button>
             </div>
@@ -33,9 +38,8 @@ export class UserForm {
             const [eventName, selector] = eventKey.split(':');
             fragment.querySelectorAll(selector).forEach(element => {
                 element.addEventListener(eventName, eventsMap[eventKey])
-            })
+            });
         }
-
     }
 
     render(): void {
