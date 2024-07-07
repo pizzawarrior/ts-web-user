@@ -42,7 +42,7 @@ export class Model<T extends HasId> {
         }
         this.sync.fetch(id)
             .then((response: AxiosResponse): void => {
-                // we use this.set so we can access the this.events.trigger() method for the User class, not the Attributes version accessed elsewhere
+                // we use this.setProperty so we can access the this.events.trigger() method for the User class, not the Attributes version accessed elsewhere
                 this.setProperty(response.data)
             });
     }

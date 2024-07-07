@@ -177,7 +177,7 @@ var Model = /** @class */function () {
       throw new Error('Cannot fetch a user without a valid id');
     }
     this.sync.fetch(id).then(function (response) {
-      // we use this.set so we can access the this.events.trigger() method for the User class, not the Attributes version accessed elsewhere
+      // we use this.setProperty so we can access the this.events.trigger() method for the User class, not the Attributes version accessed elsewhere
       _this.setProperty(response.data);
     });
   };
@@ -6076,8 +6076,15 @@ var UserForm = /** @class */function () {
     var _this = this;
     this.parent = parent;
     this.model = model;
-    this.setRandomAgeClick = function () {
+    this.onSetRandomAgeClick = function () {
       _this.model.setRandomAge();
+    };
+    this.onSetNameClick = function () {
+      var input = _this.parent.querySelector('input');
+      var name = input === null || input === void 0 ? void 0 : input.value;
+      _this.model.setProperty({
+        name: name
+      });
     };
     this.bindEventToModel();
   }
@@ -6091,11 +6098,12 @@ var UserForm = /** @class */function () {
   };
   UserForm.prototype.eventsMap = function () {
     return {
-      'click:.set-age': this.setRandomAgeClick
+      'click:.set-age': this.onSetRandomAgeClick,
+      'click:.set-name': this.onSetNameClick
     };
   };
   UserForm.prototype.template = function () {
-    return "\n            <div>\n                <h1>User Form</h1>\n                <div>User ID: ".concat(this.model.getProperty('id'), "</div>\n                <div>User Name: ").concat(this.model.getProperty('name'), "</div>\n                <div>User Age: ").concat(this.model.getProperty('age'), "</div>\n                <input>\n                <button class=\"enter\">Enter</button>\n                <button class=\"set-age\">Set Random Age</button>\n            </div>\n        ");
+    return "\n            <div>\n                <h1>User Form</h1>\n                <div>User ID: ".concat(this.model.getProperty('id'), "</div>\n                <div>User Name: ").concat(this.model.getProperty('name'), "</div>\n                <div>User Age: ").concat(this.model.getProperty('age'), "</div>\n                <input>\n                <button class=\"set-name\">Update Name</button>\n                <button class=\"set-age\">Set Random Age</button>\n            </div>\n        ");
   };
   ;
   UserForm.prototype.bindEvents = function (fragment) {
@@ -6222,7 +6230,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54796" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54027" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
