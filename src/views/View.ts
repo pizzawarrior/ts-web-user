@@ -1,9 +1,10 @@
-import { User } from "../models/User";
+import { Model } from "../models/Model";
+import { HasId } from "../models/HasId";
 
-export abstract class View{
+export abstract class View<T extends Model<K>, K extends HasId>{
     constructor(
         public parent: Element,
-        public model: User
+        public model: T
     ) {
         this.bindEventToModel();
     }
