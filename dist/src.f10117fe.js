@@ -6090,8 +6090,13 @@ var View = /*#__PURE__*/function () {
     this.model = model;
     this.bindEventToModel();
   }
-  // helper method to re-render data in the browser when a change-event is detected
   return _createClass(View, [{
+    key: "eventsMap",
+    value: function eventsMap() {
+      return {};
+    }
+    // helper method to re-render data in the browser when a change-event is detected
+  }, {
     key: "bindEventToModel",
     value: function bindEventToModel() {
       var _this = this;
@@ -6166,6 +6171,9 @@ var UserForm = /*#__PURE__*/function (_View_1$View) {
         name: name
       });
     };
+    _this.onSaveClick = function () {
+      _this.model.save();
+    };
     return _this;
   }
   _inherits(UserForm, _View_1$View);
@@ -6174,13 +6182,14 @@ var UserForm = /*#__PURE__*/function (_View_1$View) {
     value: function eventsMap() {
       return {
         'click:.set-age': this.onSetRandomAgeClick,
-        'click:.set-name': this.onSetNameClick
+        'click:.set-name': this.onSetNameClick,
+        'click:.save': this.onSaveClick
       };
     }
   }, {
     key: "template",
     value: function template() {
-      return "\n            <div>\n                <h1>User Form</h1>\n                <div>User ID: ".concat(this.model.getProperty('id'), "</div>\n                <div>User Name: ").concat(this.model.getProperty('name'), "</div>\n                <div>User Age: ").concat(this.model.getProperty('age'), "</div>\n                <input>\n                <button class=\"set-name\">Update Name</button>\n                <button class=\"set-age\">Set Random Age</button>\n            </div>\n        ");
+      return "\n            <div>\n                <input placeholder=\"".concat(this.model.getProperty('name'), "\">\n                <button class=\"set-name\">Update Name</button>\n                <br />\n                <button class=\"set-age\">Set Random Age</button>\n                <br />\n                <button class=\"save\">Save</button>\n            </div>\n        ");
     }
   }]);
 }(View_1.View);
@@ -6282,7 +6291,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55421" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54466" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

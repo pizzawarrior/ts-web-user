@@ -10,7 +10,10 @@ export abstract class View<T extends Model<K>, K extends HasId>{
     }
 
     abstract template(): string;
-    abstract eventsMap(): { [key: string]: () => void; };
+
+    eventsMap(): { [key: string]: () => void; } {
+        return {}
+    }
 
     // helper method to re-render data in the browser when a change-event is detected
     bindEventToModel(): void {
