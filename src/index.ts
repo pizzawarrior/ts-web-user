@@ -1,5 +1,5 @@
 import { User } from "./models/User"
-import { UserForm } from "./views/UserForm"
+import { UserEdit } from "./views/UserEdit";
 
 // Various tests for User class methods
 // TODO: Delete these
@@ -73,5 +73,11 @@ import { UserForm } from "./views/UserForm"
 // newCollection.fetch();
 
 const user = User.createUser({ 'id': 1, 'name': 'Jalapeno', 'age': 97 })
-const userForm = new UserForm(document.getElementById('root') as HTMLElement, user);
-userForm.render();
+const root = document.getElementById('root')
+
+if (root) {
+    const userEdit = new UserEdit(root, user);
+    userEdit.render();
+    console.log(userEdit)
+
+} else throw new Error('Root element not found')
