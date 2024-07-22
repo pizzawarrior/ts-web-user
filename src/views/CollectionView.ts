@@ -9,7 +9,7 @@ export abstract class CollectionView<T, K> {
     abstract renderItem(model: T, itemParent: Element): void
 
     render(): void {
-        // reset the innerHTML at each render
+        // reset the innerHTML of each element before each render
         this.parent.innerHTML = ''
         const templateElement = document.createElement('template');
         for (let model of this.collection.models) {
