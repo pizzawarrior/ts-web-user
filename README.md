@@ -1,8 +1,9 @@
 ## Welcome!
 
-### This project is currently under construction
-Goal: To create a full stack application in Typescript in the Object Oriented Programing style, that persists data to a backend server. The classes contained within use a combination of generic types, interfaces, inheritance, and composition. Unit testing will be done using Jest.
-
+### Project Goals:
+- To create a full stack application in Typescript using the Object Oriented Programing approach, that persists data to a backend server.
+- The classes contained within use a combination of generic types, interfaces, inheritance, and composition.
+- Unit testing will be done using Jest.
 
 ### Running this project locally
 to run this application in the browser:

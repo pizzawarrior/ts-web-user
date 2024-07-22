@@ -15,16 +15,17 @@ import { UserProps } from "./models/User";
 // } else throw new Error('Root element not found')
 
 
-const collection = new Collection('http://localhost:3000/users', (json: UserProps) => {
-    return User.createUser(json)
+const collection = new Collection('http://localhost:3000/users', (jsonData: UserProps) => {
+    return User.createUser(jsonData)
 })
 
+// if anything is added to root trigger a render
 collection.on('change', () => {
-    const root = document.getElementById('root')
+    const root = document.getElementById('root');
 
     if (root) {
-        new UserList(root, collection).render()
+        new UserList(root, collection).render();
     }
 })
 
-collection.fetch()
+collection.fetch();
