@@ -6089,7 +6089,7 @@ var CollectionView = /*#__PURE__*/function () {
   return _createClass(CollectionView, [{
     key: "render",
     value: function render() {
-      // reset the innerHTML on each render
+      // reset the innerHTML at each render
       this.parent.innerHTML = '';
       var templateElement = document.createElement('template');
       var _iterator = _createForOfIteratorHelper(this.collection.models),
@@ -6285,63 +6285,6 @@ Object.defineProperty(exports, "__esModule", {
 var User_1 = require("./models/User");
 var UserList_1 = require("./views/UserList");
 var Collection_1 = require("./models/Collection");
-// Various tests for User class methods
-// TODO: Delete these
-// const user = new User({ name: 'Steve', age: 12 })
-// user.on('change', () => {
-//     console.log('user 1 was here');
-// });
-// // user.trigger('change');
-// user.set({ 'name': 'Mikey' });
-// console.log(user.get('name'));
-// // test if events are registering and saving to the events array
-// user.events.on('change', () => { console.log('change 1') })
-// user.events.on('change', () => { console.log('change 2') })
-// user.events.on('export', () => { console.log('export') })
-// user.events.trigger('change')
-// axios.get('http://localhost:3000/users/1')
-// const user = new User({ id: 1 })
-// user.fetch();
-// setTimeout(() => {
-//     console.log(user)
-// }, 4000);
-// const user = new User({ id: 1 })
-// user.set({ name: 'Steve', age: 23 })
-// user.save()
-// console.log(user.fetch())
-// setTimeout(() => {
-//     console.log(user)
-// }, 4000);
-// const user = new User({ name: 'James', age: 239000 });
-// user.save()
-// console.log(user.fetch())
-// setTimeout(() => {
-//     console.log(user)
-// }, 3000);
-// const user = new User({ 'id': 5 });
-// user.delete();
-// const user = new User({"id": 1})
-// user.on('change', () => {
-//     console.log(user)
-// });
-// user.fetch()
-// const user = User.createUser({"name": 'Dr. Dre', 'age': 41})
-// // console.log(user.getProperty('name'))
-// user.on('save', () => {
-//     console.log(user)
-// })
-// user.save()
-// user.delete()
-// const user = User.createUser({ id: 6 })
-// user.fetch();
-// setTimeout(() => {
-//     console.log(user)
-// }, 2000);
-// const newCollection = User.createCollection()
-// newCollection.on('change', () => {
-//     console.log(newCollection);
-// });
-// newCollection.fetch();
 // const user = User.createUser({ 'id': 1, 'name': 'Jalapeno', 'age': 97 })
 // const root = document.getElementById('root')
 // if (root) {
@@ -6349,7 +6292,7 @@ var Collection_1 = require("./models/Collection");
 //     userEdit.render();
 //     console.log(userEdit)
 // } else throw new Error('Root element not found')
-var collection = new Collection_1.Collection('http:localhost3000/users', function (json) {
+var collection = new Collection_1.Collection('http://localhost:3000/users', function (json) {
   return User_1.User.createUser(json);
 });
 collection.on('change', function () {
@@ -6384,7 +6327,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57061" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59479" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
